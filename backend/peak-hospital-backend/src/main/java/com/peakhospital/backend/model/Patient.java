@@ -40,4 +40,12 @@ public class Patient {
     private LocalDateTime lastVisitDate;
 
     private int totalVisits = 0;
+
+    /** True for patients registered through the emergency desk. */
+    private boolean emergency = false;
+
+    private TriageLevel triageLevel;
+
+    /** Used when the real date of birth is not known (e.g. unconscious patient). */
+    private Integer approximateAge;
 }

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import DoctorForm from "../components/DoctorForm";
 import DoctorList from "../components/DoctorList";
+import { hasRole } from "../utils/auth";
 
 export default function DoctorsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const isAdmin = hasRole("ADMIN");
 
   return (
     <div>
@@ -12,12 +14,14 @@ export default function DoctorsPage() {
         <p style={styles.subtitle}>Hospital staff who see patients and run appointments.</p>
       </header>
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>Add a doctor</h2>
-        <DoctorForm onAdded={() => setRefreshKey((k) => k + 1)} />
-      </section>
+      {isAdmin && (
+        <section style={{ ...styles.section, marginBottom: 24 }}>
+          <h2 style={styles.sectionTitle}>Add a doctor</h2>
+          <DoctorForm onAdded={() => setRefreshKey((k) => k + 1)} />
+        </section>
+      )}
 
-      <section style={{ ...styles.section, marginTop: 24 }}>
+      <section style={styles.section}>
         <h2 style={styles.sectionTitle}>All doctors</h2>
         <DoctorList refreshKey={refreshKey} />
       </section>

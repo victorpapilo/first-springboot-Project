@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 function getToken() {
   return localStorage.getItem("peakhospital_token");
@@ -14,7 +14,7 @@ async function request(path, options = {}) {
     ...options,
   });
 
-  if (res.status === 401) {
+  if (res.status === 401 && !path.startsWith("/auth/")) {
     localStorage.removeItem("peakhospital_token");
     localStorage.removeItem("peakhospital_user");
     window.location.reload();
@@ -142,4 +142,71 @@ export const api = {
 
   completeLabTest: (id, result) =>
     request(`/lab-tests/${id}/complete`, { method: "PUT", body: JSON.stringify({ result }) }),
+    // --- Clinical records ---
+  getClinicalRecords: (patientId) =>
+    request(`/clinical-records/patient/${encodeURIComponent(patientId)}`),
+
+  createClinicalRecord: (record) =>
+    request("/clinical-records", { method: "POST", body: JSON.stringify(record) }),
+
+  // --- Audit log (admin only) ---
+  getAuditLogs: (patientId, page = 0, size = 50) =>
+    request(
+      `/audit-logs?page=${page}&size=${size}${patientId ? `&patientId=${encodeURIComponent(patientId)}` : ""}`
+    ),
+
+  // --- Sign up (public) ---
+  signupPatient: (data) =>
+    request("/auth/signup/patient", { method: "POST", body: JSON.stringify(data) }),
+
+  signupStaff: (data) =>
+    request("/auth/signup/staff", { method: "POST", body: JSON.stringify(data) }),
+
+  // --- Staff approvals (admin only) ---
+  getStaffApplications: (status = "PENDING") =>
+    request(`/staff-applications?status=${encodeURIComponent(status)}`),
+
+  approveStaffApplication: (id, details = {}) =>
+    request(`/staff-applications/${id}/approve`, { method: "POST", body: JSON.stringify(details) }),
+
+  rejectStaffApplication: (id, note) =>
+    request(`/staff-applications/${id}/reject`, { method: "POST", body: JSON.stringify({ note }) }),
+
+  // --- My account ---
+  getProfile: () => request("/me"),
+
+  changePassword: (currentPassword, newPassword) =>
+    request("/me/password", { method: "PUT", body: JSON.stringify({ currentPassword, newPassword }) }),
+
+  completeAccount: (data) =>
+    request("/me/complete-account", { method: "PUT", body: JSON.stringify(data) }),
+
+  getMyAppointments: () => request("/me/appointments"),
+  getMyLabTests: () => request("/me/lab-tests"),
+  getMyInvoices: () => request("/me/invoices"),
+  getMyPrescriptions: () => request("/me/prescriptions"),
+
+  // --- Users & roles (admin only) ---
+  getUsers: (scope = "staff") => request(`/users?scope=${encodeURIComponent(scope)}`),
+
+  createUser: (user) =>
+    request("/users", { method: "POST", body: JSON.stringify(user) }),
+
+  changeUserRole: (id, role) =>
+    request(`/users/${id}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
+
+  setUserActive: (id, active) =>
+    request(`/users/${id}/active`, { method: "PUT", body: JSON.stringify({ active }) }),
+
+  resetUserPassword: (id) => request(`/users/${id}/reset-password`, { method: "POST" }),
+
+  // --- Patient logins (admin or receptionist) ---
+  createPortalAccount: (patientId) =>
+    request("/portal-accounts", { method: "POST", body: JSON.stringify({ patientId }) }),
+
+  // --- Emergency desk ---
+  registerEmergency: (data) =>
+    request("/emergency/register", { method: "POST", body: JSON.stringify(data) }),
+
+  getEmergencyQueue: () => request("/emergency/queue"),
 };

@@ -1,3 +1,4 @@
+
 package com.peakhospital.backend.controller;
 
 import com.peakhospital.backend.dto.AuthResponse;
@@ -16,13 +17,20 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // Public registration: always creates a patient account.
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    public ResponseEntity<AuthResponse> register(
+            @RequestBody RegisterRequest request) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(authService.register(request));
     }
 
+    // Shared login for all roles.
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody LoginRequest request) {
+
         return ResponseEntity.ok(authService.login(request));
     }
 }

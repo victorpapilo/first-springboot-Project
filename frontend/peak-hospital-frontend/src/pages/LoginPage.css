@@ -1,0 +1,211 @@
+/* Uses the theme variables already defined in your app (--paper, --teal-600, etc.).
+   The fallback after each comma only applies if a variable is missing. */
+
+.login {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--paper, #f6f4ef);
+}
+
+/* ---------- Image panel ---------- */
+.login__visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 48px;
+  color: #fff;
+  /* Image lives at public/login-hero.jpg.
+     To use a real photo instead, save it as public/login-hero.jpg
+     and change the url() below. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 42, 45, 0.35) 0%,
+      rgba(14, 42, 45, 0.1) 40%,
+      rgba(14, 42, 45, 0.85) 100%
+    ),
+    url("/login-hero.jpg") center / cover no-repeat,
+    linear-gradient(135deg, #1f6f6f 0%, #0e2a2d 100%);
+}
+
+.login__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login__mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm, 8px);
+  background: #fff;
+  color: #0f2a2e;
+  font-family: var(--font-display, Georgia, serif);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.login__brandtext {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.login__brandtext small {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.login__message {
+  max-width: 30rem;
+}
+
+.login__message h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.login__message p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.88;
+}
+
+/* ---------- Form panel ---------- */
+.login__panel {
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.login__title {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 30px;
+  color: var(--ink-900, #0e2a2d);
+}
+
+.login__subtitle {
+  margin: 0 0 10px;
+  font-size: 14.5px;
+  color: var(--text-muted, #5d6f71);
+}
+
+.login__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted, #5d6f71);
+}
+
+.login__input {
+  padding: 11px 12px;
+  border: 1px solid var(--line, #d9dfdf);
+  border-radius: var(--radius-sm, 8px);
+  background: #fff;
+  font-size: 14.5px;
+}
+
+.login__input:focus-visible {
+  outline: 2px solid var(--teal-600, #1f6f6f);
+  outline-offset: 1px;
+  border-color: var(--teal-600, #1f6f6f);
+}
+
+.login__submit {
+  margin-top: 6px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--teal-600, #1f6f6f);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+
+.login__submit:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.login__submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.login__submit:focus-visible {
+  outline: 2px solid var(--ink-900, #0e2a2d);
+  outline-offset: 2px;
+}
+
+.login__error {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--red-600, #c0392b);
+}
+
+.login__footnote {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted, #5d6f71);
+}
+
+/* Text-style button used for "Create an account" / "Back" links */
+.login__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--teal-600, #1f6f6f);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Phones and small tablets: hide the image panel ---------- */
+@media (max-width: 860px) {
+  .login {
+    grid-template-columns: 1fr;
+  }
+  .login__visual {
+    display: none;
+  }
+}
+
+.login__logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f7f1;
+  border-radius: 14px;
+  padding: 8px 14px;
+  width: fit-content;
+  max-width: 230px;
+  overflow: hidden;
+}
+
+.login__logo {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: 105px;
+  object-fit: contain;
+}

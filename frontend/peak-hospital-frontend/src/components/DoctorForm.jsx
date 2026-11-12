@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Field, inputStyle } from "./Field";
 import { api } from "../api/client";
 
-const EMPTY = { fullName: "", specialization: "", phoneNumber: "", email: "" };
+const EMPTY = { fullName: "", specialization: "", phoneNumber: "", email: "", visiting: false, visitingDays: "" };
 
 export default function DoctorForm({ onAdded }) {
   const [form, setForm] = useState(EMPTY);
@@ -63,6 +63,25 @@ export default function DoctorForm({ onAdded }) {
         </Field>
       </div>
 
+      <div style={styles.visitingRow}>
+        <label style={styles.check}>
+          <input
+            type="checkbox"
+            checked={form.visiting}
+            onChange={(e) => update("visiting", e.target.checked)}
+          />
+          Visiting doctor (comes in on set days)
+        </label>
+        {form.visiting && (
+          <input
+            style={{ ...inputStyle, maxWidth: 260 }}
+            value={form.visitingDays}
+            onChange={(e) => update("visitingDays", e.target.value)}
+            placeholder="Days, e.g. Mon, Wed"
+          />
+        )}
+      </div>
+
       <div style={styles.actions}>
         <button type="submit" style={styles.submit} disabled={status.state === "loading"}>
           {status.state === "loading" ? "Adding…" : "Add doctor"}
@@ -81,6 +100,8 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
     gap: 16,
   },
+  visitingRow: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" },
+  check: { display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
   actions: { display: "flex", alignItems: "center", gap: 14 },
   submit: {
     background: "var(--teal-600)",

@@ -27,4 +27,10 @@ public class Doctor {
     private String email;
 
     private boolean active = true;
+
+    /** Visiting doctors come in on set days instead of working full time. */
+    private boolean visiting = false;
+
+    /** Free text such as "Mon, Wed, Fri". */
+    private String visitingDays;
 }

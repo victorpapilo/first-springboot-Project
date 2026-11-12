@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Field, inputStyle } from "../components/Field";
 import { api } from "../api/client";
+import { hasRole } from "../utils/auth";
 
 export default function LabTestsPage() {
   const [patients, setPatients] = useState([]);
   const [tests, setTests] = useState([]);
+  // Clinicians order tests; laboratory staff enter the results.
+  const canOrder = hasRole("ADMIN", "DOCTOR", "NURSE");
+  const canEnter = hasRole("ADMIN", "LAB_TECHNICIAN");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [patientId, setPatientId] = useState("");
@@ -12,9 +16,9 @@ export default function LabTestsPage() {
   const [status, setStatus] = useState({ state: "idle", message: "" });
 
   useEffect(() => {
-    api.getPatients().then(setPatients).catch(() => {});
+    if (canOrder) api.getPatients().then(setPatients).catch(() => {});
     api.getLabTests().then(setTests).catch(() => {});
-  }, [refreshKey]);
+  }, [refreshKey, canOrder]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -36,17 +40,24 @@ export default function LabTestsPage() {
   async function handleComplete(test) {
     const result = prompt(`Result for ${test.testName} (${test.patientName}):`, "");
     if (result === null || result.trim() === "") return;
-    await api.completeLabTest(test.id, result);
-    setRefreshKey((k) => k + 1);
+    try {
+      await api.completeLabTest(test.id, result);
+      setRefreshKey((k) => k + 1);
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   return (
     <div>
       <header style={styles.header}>
         <h1 style={styles.title}>Lab Tests</h1>
-        <p style={styles.subtitle}>Order tests and record results.</p>
+        <p style={styles.subtitle}>
+          {canOrder && canEnter ? "Order tests and record results." : canOrder ? "Order tests and read results." : "Enter results for tests ordered by the clinical team."}
+        </p>
       </header>
 
+      {canOrder && (
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Order a test</h2>
         {patients.length === 0 ? (
@@ -74,8 +85,9 @@ export default function LabTestsPage() {
           </form>
         )}
       </section>
+      )}
 
-      <section style={{ ...styles.section, marginTop: 24 }}>
+      <section style={{ ...styles.section, marginTop: canOrder ? 24 : 0 }}>
         <h2 style={styles.sectionTitle}>All tests</h2>
         <div className="scroll-x">
           <table style={styles.table}>
@@ -103,7 +115,7 @@ export default function LabTestsPage() {
                   </td>
                   <td style={styles.td}>{t.result || "—"}</td>
                   <td style={styles.td}>
-                    {t.status === "ORDERED" && (
+                    {canEnter && t.status === "ORDERED" && (
                       <button style={styles.smallBtn} onClick={() => handleComplete(t)}>Enter result</button>
                     )}
                   </td>

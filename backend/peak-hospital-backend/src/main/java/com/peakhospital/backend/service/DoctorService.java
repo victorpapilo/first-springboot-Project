@@ -35,6 +35,8 @@ public class DoctorService {
         existing.setSpecialization(updated.getSpecialization());
         existing.setPhoneNumber(updated.getPhoneNumber());
         existing.setEmail(updated.getEmail());
+        existing.setVisiting(updated.isVisiting());
+        existing.setVisitingDays(updated.getVisitingDays());
         return doctorRepository.save(existing);
     }
 

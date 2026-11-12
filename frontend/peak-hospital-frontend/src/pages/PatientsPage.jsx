@@ -1,9 +1,11 @@
 import { useState } from "react";
 import PatientForm from "../components/PatientForm";
 import PatientList from "../components/PatientList";
+import { hasRole } from "../utils/auth";
 
 export default function PatientsPage({ onDataChanged }) {
   const [listKey, setListKey] = useState(0);
+  const canRegister = hasRole("ADMIN", "RECEPTIONIST");
 
   function handleRegistered() {
     setListKey((k) => k + 1);
@@ -14,15 +16,19 @@ export default function PatientsPage({ onDataChanged }) {
     <div>
       <header style={styles.header}>
         <h1 style={styles.title}>Patients</h1>
-        <p style={styles.subtitle}>Register a new patient, or search existing records.</p>
+        <p style={styles.subtitle}>
+          {canRegister ? "Register a new patient, or search existing records." : "Search existing patient records."}
+        </p>
       </header>
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>Register a patient</h2>
-        <PatientForm onRegistered={handleRegistered} />
-      </section>
+      {canRegister && (
+        <section style={{ ...styles.section, marginBottom: 24 }}>
+          <h2 style={styles.sectionTitle}>Register a patient</h2>
+          <PatientForm onRegistered={handleRegistered} />
+        </section>
+      )}
 
-      <section style={{ ...styles.section, marginTop: 24 }}>
+      <section style={styles.section}>
         <h2 style={styles.sectionTitle}>All patients</h2>
         <PatientList refreshKey={listKey} />
       </section>

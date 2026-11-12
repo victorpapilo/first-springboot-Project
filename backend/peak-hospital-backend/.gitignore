@@ -34,3 +34,12 @@ build/
 
 ### OS ###
 .DS_Store
+
+
+.env
+.env.*
+!.env.example
+application-local.properties
+node_modules/
+target/
+dist/

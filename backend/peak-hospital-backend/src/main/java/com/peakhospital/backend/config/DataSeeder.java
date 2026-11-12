@@ -23,6 +23,8 @@ public class DataSeeder implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setFullName("Default Admin");
             admin.setRole(Role.ADMIN);
+            admin.setMustChangePassword(true);
+            admin.setCreatedAt(java.time.LocalDateTime.now());
             userRepository.save(admin);
             System.out.println(">>> Seeded default admin account: username 'admin', password 'admin123'. Change this!");
         }

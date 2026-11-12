@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
+import { hasRole } from "../utils/auth";
 
 export default function DoctorList({ refreshKey }) {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isAdmin = hasRole("ADMIN");
 
   useEffect(() => {
     setLoading(true);
@@ -37,13 +39,22 @@ export default function DoctorList({ refreshKey }) {
           )}
           {doctors.map((d) => (
             <tr key={d.id}>
-              <td style={styles.td}>Dr. {d.fullName}</td>
+              <td style={styles.td}>
+                Dr. {d.fullName}
+                {d.visiting && (
+                  <span style={styles.visiting}>
+                    Visiting{d.visitingDays ? ` · ${d.visitingDays}` : ""}
+                  </span>
+                )}
+              </td>
               <td style={styles.td}>{d.specialization}</td>
               <td style={styles.td}>{d.phoneNumber || "—"}</td>
               <td style={styles.td}>
-                <button style={styles.deleteBtn} onClick={() => handleDelete(d.id)}>
-                  Remove
-                </button>
+                {isAdmin && (
+                  <button style={styles.deleteBtn} onClick={() => handleDelete(d.id)}>
+                    Remove
+                  </button>
+                )}
               </td>
             </tr>
           ))}
@@ -67,6 +78,16 @@ const styles = {
     padding: "12px 14px",
     borderBottom: "1px solid var(--line)",
     color: "var(--text-primary)",
+  },
+  visiting: {
+    display: "inline-block",
+    marginLeft: 10,
+    padding: "2px 8px",
+    borderRadius: 999,
+    background: "var(--amber-100)",
+    color: "var(--amber-600)",
+    fontSize: 12,
+    fontWeight: 500,
   },
   empty: { padding: "20px 14px", color: "var(--text-muted)", textAlign: "center" },
   deleteBtn: {
